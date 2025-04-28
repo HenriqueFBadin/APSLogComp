@@ -1,51 +1,45 @@
-program = { statement } ;
+PROGRAM = { STATEMENT } ;
 
-statement = note_stmt
-          | pause_stmt
-          | instrument_stmt
-          | tempo_stmt
-          | repeat_stmt
-          | if_stmt
-          | var_stmt ;
+STATEMENT = ( NOTE | PAUSE | INSTRUMENT | TEMPO | REPEAT | IF | VAR ), "\n" ;
 
-note_stmt = "note", ( note_name | identifier ), "duration", ( number | identifier ) ;
+NOTE = "note", ( NOTE_NAME | IDENTIFIER ), "duration", ( NUMBER | IDENTIFIER ) ;
 
-pause_stmt = "pause", "duration", ( number | identifier ) ;
+PAUSE = "pause", "duration", ( NUMBER | IDENTIFIER ) ;
 
-instrument_stmt = "instrument", ( string | identifier ) ;
+INSTRUMENT = "instrument", ( STRING | IDENTIFIER ) ;
 
-tempo_stmt = "tempo_base", ( number | identifier ) ;
+TEMPO = "tempo_base", ( NUMBER | IDENTIFIER ) ;
 
-repeat_stmt = "repeat", ( number | identifier ), "times", block ;
+REPEAT = "repeat", ( NUMBER | IDENTIFIER ), "times", "\n", BLOCK ;
 
-if_stmt = "if", condition, block ;
+IF = "if", CONDITION, "\n", BLOCK ;
 
-var_stmt = "var", identifier, "=", ( note_name | sequence | string | number ), ";" ;
+VAR = "var", IDENTIFIER, "=", ( NOTE_NAME | SEQUENCE | STRING | NUMBER ) ;
 
-sequence = "[", note_name, { ",", note_name }, "]" ;
+SEQUENCE = "[", NOTE_NAME, { ",", NOTE_NAME }, "]" ;
 
-block = "{", { statement }, "}" ;
+BLOCK = "{", "\n", { STATEMENT }, "}" ;
 
-condition = simple_condition, { logical_operator, simple_condition } ;
+CONDITION = SIMPLECONDITION, { LOGICALOPERATOR, SIMPLECONDITION } ;
 
-simple_condition = ( "current_note" | "current_instrument" | "tempo_base" ), comparator, ( note_name | string | number | identifier ) ;
+SIMPLECONDITION = ( NOTE_NAME | STRING | NUMBER | IDENTIFIER ), COMPARATOR, ( NOTE_NAME | STRING | NUMBER | IDENTIFIER ) ;
 
-logical_operator = "and" | "or" ;
+LOGICALOPERATOR = ( "and" | "or" | "not" ) ;
 
-comparator = "==" | "!=" | ">" | "<" | ">=" | "<=" ;
+COMPARATOR = ( "==" | "!=" | ">" | "<" | ">=" | "<=" ) ;
 
-note_name = letter, { letter_or_digit } ;
+NOTE_NAME = ( LETTER, [ ACCIDENTAL ], [ DIGIT, { DIGIT } ] ) ;
 
-identifier = letter, { letter_or_digit } ;
+IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
 
-string = '"', { character }, '"' ;
+STRING = '"', { CHARACTER }, '"' ;
 
-character = letter | digit ;
+CHARACTER = ( LETTER | DIGIT ) ;
 
-number = digit, { digit }, [ ".", digit, { digit } ] ;
+NUMBER = DIGIT, { DIGIT }, [ ".", DIGIT, { DIGIT } ] ;
 
-letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" ;
+LETTER = ( A | ... | G ) ;
 
-letter_or_digit = letter | "#" | digit ;
+ACCIDENTAL = ( "#" | "b" ) ;
 
-digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+DIGIT = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
