@@ -1,8 +1,58 @@
 # APSLogComp
 
+```ebnf
+PROGRAM = SETUP, { STATEMENT } ;
+
+
+SETUP = "music_base", "{", ( INSTRUMENT | TEMPO ), "}" ;
+
+
+STATEMENT = ( λ 
+	    | PLAYNOTE
+	    | PLAYSEQUENCE
+	    | PAUSE 
+            | "repeat", ( NUMBER | IDENTIFIER ), "times", [ "while", BEXPRESSION ] "\n", BLOCK 
+	    | "if", BEXPRESSION, "\n", BLOCK, ["else", BLOCK] 
+	    | "var", IDENTIFIER, "=", ( NOTE | SEQUENCE | STRING | NUMBER ) ), "\n" ;
+
+
+NOTE = "note", ( NOTE_NAME | IDENTIFIER ), "duration", ( NUMBER | IDENTIFIER ) ;
+PAUSE = "pause", "duration", ( NUMBER | IDENTIFIER ) ;
+INSTRUMENT = "instrument", ( STRING | IDENTIFIER ) ;
+TEMPO = "tempo_base", ( NUMBER | IDENTIFIER ) ;
+SEQUENCE = "[", ( NOTE | IDENTIFIER ), { ",", ( NOTE | IDENTIFIER ) }, "]" ;
+
+
+PLAYNOTE = "play_note", ( NOTE | IDENTIFIER ) ; 
+PLAYSEQUENCE = "play_sequence", ( SEQUENCE | IDENTIFIER ) ;
+
+
+BLOCK = "{", "\n", { STATEMENT }, "}" ;
+BEXPRESSION  = BTERM, { ( "||", "or" ) , BTERM } ; 
+BTERM = RELEXPRESSION, { ( "&&" | "and" ), RELEXPRESSION } ;
+RELEXPRESSION = EXPRESSION, { ( "==" | "!=" | ">" | "<" | ">=" | "<=" ), EXPRESSION } ;
+EXPRESSION = TERM, { ("+" | "-"), TERM } ;
+TERM = FACTOR, { ("*" | "/"), FACTOR } ;
+FACTOR = ( ( "+" | "-" | ( "!" | "not" ) ), FACTOR
+         | IDENTIFIER
+         | NUMBER
+         | STRING                              
+         | "(", EXPRESSION, ")" ) ;
+
+
+NOTE_NAME = ( LETTER, [ ACCIDENTAL ], [ DIGIT, { DIGIT } ] ) ;
+IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
+STRING = '"', { CHARACTER }, '"' ;
+CHARACTER = ( LETTER | DIGIT ) ;
+NUMBER = DIGIT, { DIGIT }, [ ".", DIGIT, { DIGIT } ] ;
+LETTER = ( A | ... | G ) ;
+ACCIDENTAL = ( "#" | "b" ) ;
+DIGIT = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
+```
+
 ## Descrição do que foi feito para a **Entrega Parcial 1**
 
-Para essa entrega foi desenvolvida uma EBNF para uma linguagem de criação de música.
+Para essa entrega foi desenvolvida uma EBNF, que está presente no arquivo EBNF_APS.txt, para uma linguagem de criação de música.
 
 A linguagem desenvolvida permite a criação de sequências musicais programáveis de forma simples e estruturada.
 
