@@ -6,41 +6,46 @@ statement = note_stmt
           | tempo_stmt
           | repeat_stmt
           | if_stmt
-          | var_stmt
-          ;
+          | var_stmt ;
 
-note_stmt = "note" ( note_name | identifier ) "duration" ( number | identifier ) ;
+note_stmt = "note", ( note_name | identifier ), "duration", ( number | identifier ) ;
 
-pause_stmt = "pause" "duration" ( number | identifier ) ;
+pause_stmt = "pause", "duration", ( number | identifier ) ;
 
-instrument_stmt = "instrument" ( string | identifier ) ;
+instrument_stmt = "instrument", ( string | identifier ) ;
 
-tempo_stmt = "tempo_base" ( number | identifier ) ;
+tempo_stmt = "tempo_base", ( number | identifier ) ;
 
-repeat_stmt = "repeat" ( number | identifier ) "times" block ;
+repeat_stmt = "repeat", ( number | identifier ), "times", block ;
 
-if_stmt = "if" condition block ;
+if_stmt = "if", condition, block ;
 
-var_stmt = "var" identifier "=" ( note_name | sequence | string | number ) ";" ;
+var_stmt = "var", identifier, "=", ( note_name | sequence | string | number ), ";" ;
 
-sequence = "[" note_name { "," note_name } "]" ;
+sequence = "[", note_name, { ",", note_name }, "]" ;
 
-block = "{" { statement } "}" ;
+block = "{", { statement }, "}" ;
 
-condition = simple_condition { logical_operator simple_condition } ;
-simple_condition = ( "current_note" | "current_instrument" | "tempo_base" ) comparator ( note_name | string | number | identifier ) ;
+condition = simple_condition, { logical_operator, simple_condition } ;
+
+simple_condition = ( "current_note" | "current_instrument" | "tempo_base" ), comparator, ( note_name | string | number | identifier ) ;
+
 logical_operator = "and" | "or" ;
 
 comparator = "==" | "!=" | ">" | "<" | ">=" | "<=" ;
 
-note_name = letter { letter_or_digit } ;
+note_name = letter, { letter_or_digit } ;
 
-identifier = letter { letter_or_digit } ;
-string = '"' { character } '"' ;
+identifier = letter, { letter_or_digit } ;
+
+string = '"', { character }, '"' ;
 
 character = letter | digit ;
 
-number = digit { digit } [ "." digit { digit } ] ;
+number = digit, { digit }, [ ".", digit, { digit } ] ;
+
 letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" ;
+
 letter_or_digit = letter | "#" | digit ;
+
 digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
