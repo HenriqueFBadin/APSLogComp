@@ -1,7 +1,5 @@
-(* Programa completo *)
 program = { statement } ;
 
-(* Instruções possíveis *)
 statement = note_stmt
           | pause_stmt
           | instrument_stmt
@@ -11,53 +9,37 @@ statement = note_stmt
           | var_stmt
           ;
 
-note_stmt = "nota" ( note_name | identifier ) "tempo" ( number | identifier ) ;
+note_stmt = "note" ( note_name | identifier ) "duration" ( number | identifier ) ;
 
-pause_stmt = "pausa" "tempo" ( number | identifier ) ;
+pause_stmt = "pause" "duration" ( number | identifier ) ;
 
-instrument_stmt = "instrumento" ( string | identifier ) ;
+instrument_stmt = "instrument" ( string | identifier ) ;
 
 tempo_stmt = "tempo_base" ( number | identifier ) ;
 
-(* Repetição de bloco *)
-repeat_stmt = "repetir" number "vezes" block ;
+repeat_stmt = "repeat" ( number | identifier ) "times" block ;
 
-(* Estrutura condicional *)
-if_stmt = "se" condition block ;
+if_stmt = "if" condition block ;
 
-(* Declaração de variáveis *)
 var_stmt = "var" identifier "=" ( note_name | sequence | string | number ) ";" ;
 
-(* Sequência de notas *)
 sequence = "[" note_name { "," note_name } "]" ;
 
-(* Bloco de código *)
 block = "{" { statement } "}" ;
 
-(* Condições *)
 condition = simple_condition { logical_operator simple_condition } ;
-simple_condition = ( "nota_atual" | "instrumento_atual" | "tempo_base" ) comparator ( note_name | string | number ) ;
+simple_condition = ( "current_note" | "current_instrument" | "tempo_base" ) comparator ( note_name | string | number | identifier ) ;
 logical_operator = "and" | "or" ;
 
-(* Operadores de comparação *)
 comparator = "==" | "!=" | ">" | "<" | ">=" | "<=" ;
 
-(* Identificação de notas *)
 note_name = letter { letter_or_digit } ;
 
-(* Variáveis e strings *)
 identifier = letter { letter_or_digit } ;
 string = '"' { character } '"' ;
 
-(* Caracteres permitidos em strings *)
-character = letter | digit | special_character ;
+character = letter | digit ;
 
-special_character = " " | "!" | "#" | "$" | "%" | "&" | "'" | "(" | ")" 
-                  | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | "<" 
-                  | "=" | ">" | "?" | "@" | "[" | "\\" | "]" | "^" | "_" 
-                  | "`" | "{" | "|" | "}" | "~" ;
-
-(* Definições básicas *)
 number = digit { digit } [ "." digit { digit } ] ;
 letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" ;
 letter_or_digit = letter | "#" | digit ;
