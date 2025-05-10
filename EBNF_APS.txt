@@ -8,9 +8,9 @@ STATEMENT = ( λ
 	    | PLAYNOTE
 	    | PLAYSEQUENCE
 	    | PAUSE 
-            | "repeat", ( NUMBER | IDENTIFIER ), "times", [ "while", BEXPRESSION ] "\n", BLOCK 
+        | "repeat", ( NUMBER | IDENTIFIER ), "times", [ "while", BEXPRESSION ] "\n", BLOCK 
 	    | "if", BEXPRESSION, "\n", BLOCK, ["else", BLOCK] 
-	    | "var", IDENTIFIER, "=", ( NOTE | SEQUENCE | STRING | NUMBER ) ), "\n" ;
+	    | "var", IDENTIFIER, "=", ( NOTE | SEQUENCE | STRING | NUMBER | IDENTIFIER ) ), "\n" ;
 
 
 NOTE = "note", ( NOTE_NAME | IDENTIFIER ), "duration", ( NUMBER | IDENTIFIER ) ;
