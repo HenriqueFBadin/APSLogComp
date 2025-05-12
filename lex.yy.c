@@ -954,7 +954,7 @@ YY_RULE_SETUP
 case 25:
 YY_RULE_SETUP
 #line 36 "music.l"
-{ return TIMES_OP; }
+{ return MULTIPLIER; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP

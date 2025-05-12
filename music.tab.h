@@ -79,7 +79,7 @@ extern int yydebug;
     NOT = 280,                     /* NOT  */
     PLUS = 281,                    /* PLUS  */
     MINUS = 282,                   /* MINUS  */
-    TIMES_OP = 283,                /* TIMES_OP  */
+    MULTIPLIER = 283,              /* MULTIPLIER  */
     DIV = 284,                     /* DIV  */
     LPAREN = 285,                  /* LPAREN  */
     RPAREN = 286,                  /* RPAREN  */

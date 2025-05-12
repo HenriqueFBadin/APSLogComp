@@ -133,7 +133,7 @@ enum yysymbol_kind_t
   YYSYMBOL_NOT = 25,                       /* NOT  */
   YYSYMBOL_PLUS = 26,                      /* PLUS  */
   YYSYMBOL_MINUS = 27,                     /* MINUS  */
-  YYSYMBOL_TIMES_OP = 28,                  /* TIMES_OP  */
+  YYSYMBOL_MULTIPLIER = 28,                /* MULTIPLIER  */
   YYSYMBOL_DIV = 29,                       /* DIV  */
   YYSYMBOL_LPAREN = 30,                    /* LPAREN  */
   YYSYMBOL_RPAREN = 31,                    /* RPAREN  */
@@ -582,7 +582,7 @@ static const char *const yytname[] =
   "INSTRUMENT", "TEMPO", "NOTE", "DURATION", "PAUSE", "REPEAT", "TIMES",
   "WHILE", "IF", "ELSE", "VAR", "PLAY_NOTE", "PLAY_SEQUENCE", "EQ", "NEQ",
   "GT", "LT", "GTE", "LTE", "AND", "OR", "NOT", "PLUS", "MINUS",
-  "TIMES_OP", "DIV", "LPAREN", "RPAREN", "LBRACE", "RBRACE", "LBRACKET",
+  "MULTIPLIER", "DIV", "LPAREN", "RPAREN", "LBRACE", "RBRACE", "LBRACKET",
   "RBRACKET", "COMMA", "ASSIGN", "NEWLINE", "NOTE_NAME", "IDENTIFIER",
   "STRING", "NUMBER", "ERROR", "$accept", "PROGRAM", "SETUP",
   "instrument_or_tempo", "STATEMENTS", "STATEMENT", "VAR_VALUE",

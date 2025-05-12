@@ -33,7 +33,7 @@ int lex_error_count = 0;
 "||"               { return OR; }
 "+"                { return PLUS; }
 "-"                { return MINUS; }
-"*"                { return TIMES_OP; }
+"*"                { return MULTIPLIER; }
 "/"                { return DIV; }
 "!"                { return NOT; }
 "("                { return LPAREN; }
