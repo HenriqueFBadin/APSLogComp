@@ -11,7 +11,7 @@ STATEMENT = ( λ
 	    | PLAYNOTE
 	    | PLAYSEQUENCE
 	    | PAUSE 
-            | "repeat", ( NUMBER | IDENTIFIER ), "times", [ "while", BEXPRESSION ] "\n", BLOCK 
+        | "repeat", ( NUMBER | IDENTIFIER ), "times", [ "while", BEXPRESSION ] "\n", BLOCK 
 	    | "if", BEXPRESSION, "\n", BLOCK, ["else", BLOCK] 
 	    | "var", IDENTIFIER, "=", ( NOTE | SEQUENCE | STRING | NUMBER ) ), "\n" ;
 
@@ -33,7 +33,7 @@ BTERM = RELEXPRESSION, { ( "&&" | "and" ), RELEXPRESSION } ;
 RELEXPRESSION = EXPRESSION, { ( "==" | "!=" | ">" | "<" | ">=" | "<=" ), EXPRESSION } ;
 EXPRESSION = TERM, { ("+" | "-"), TERM } ;
 TERM = FACTOR, { ("*" | "/"), FACTOR } ;
-FACTOR = ( ( "+" | "-" | ( "!" | "not" ) ), FACTOR
+FACTOR = ( ( "+" | "-" | ( "!" ) ), FACTOR
          | IDENTIFIER
          | NUMBER
          | STRING                              

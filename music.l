@@ -50,7 +50,6 @@ int lex_error_count = 0;
 
 "or"               { return OR; }
 "and"              { return AND; }
-"not"              { return NOT; }
 
 [0-9]+(\.[0-9]+)?     { yylval.num = atof(yytext); return NUMBER; }
 \"[a-zA-Z0-9_ ]+\"    { yylval.str = strdup(yytext); return STRING; }
