@@ -172,23 +172,32 @@ class BinOp(Node):
         left, left_type = self.children[0].generate(st)
         right, right_type = self.children[1].generate(st)
 
+        if left_type == "double":
+            left_type = "float"
+        if right_type == "double":
+            right_type = "float"
+
         # ============= OPERAÇÕES ARITMÉTICAS =============#
         if self.value in ["+", "-", "*", "/"]:
             # Verificar se ambos os tipos são numéricos (i32 ou float)
-            if (left_type not in ["i32", "float"]) or (
-                right_type not in ["i32", "float"]
+            if (left_type not in ["i32", "float", "double"]) or (
+                right_type not in ["i32", "float", "double"]
             ):
-                raise TypeError(f"Operador '{self.value}' requer operandos numéricos")
+                raise TypeError(
+                    f"Operador '{self.value}' requer operandos numéricos, mas recebeu {left_type} e {right_type}"
+                )
+
+            print(f"{left_type} e {right_type}")
 
             # Conversão implícita: se qualquer lado for float, converte ambos para float
             if left_type == "float" and right_type != "float":
                 tmp_conv = create_temporary()
-                Code.append(f"%{tmp_conv} = sitofp i32 {right} to float")
+                Code.append(f"%{tmp_conv} = sitofp i32 {right} to double")
                 right = f"%{tmp_conv}"
                 right_type = "float"
             elif right_type == "float" and left_type != "float":
                 tmp_conv = create_temporary()
-                Code.append(f"%{tmp_conv} = sitofp i32 {left} to float")
+                Code.append(f"%{tmp_conv} = sitofp i32 {left} to double")
                 left = f"%{tmp_conv}"
                 left_type = "float"
 
@@ -201,16 +210,24 @@ class BinOp(Node):
 
             if self.value == "+":
                 op = "fadd" if result_type == "float" else "add"
+                if result_type == "float":
+                    result_type = "double"
                 Code.append(f"%{tmp} = {op} {result_type} {left}, {right}")
             elif self.value == "-":
                 op = "fsub" if result_type == "float" else "sub"
+                if result_type == "float":
+                    result_type = "double"
                 Code.append(f"%{tmp} = {op} {result_type} {left}, {right}")
             elif self.value == "*":
                 op = "fmul" if result_type == "float" else "mul"
+                if result_type == "float":
+                    result_type = "double"
                 Code.append(f"%{tmp} = {op} {result_type} {left}, {right}")
             elif self.value == "/":
                 # Não há verificação de divisão por zero em tempo de compilação em LLVM
                 op = "fdiv" if result_type == "float" else "sdiv"
+                if result_type == "float":
+                    result_type = "double"
                 Code.append(f"%{tmp} = {op} {result_type} {left}, {right}")
 
             return f"%{tmp}", result_type
@@ -237,12 +254,12 @@ class BinOp(Node):
                 # Converter para float se um dos operandos for float
                 if left_type == "float" and right_type != "float":
                     tmp_conv = create_temporary()
-                    Code.append(f"%{tmp_conv} = sitofp i32 {right} to float")
+                    Code.append(f"%{tmp_conv} = sitofp i32 {right} to double")
                     right = f"%{tmp_conv}"
                     right_type = "float"
                 elif right_type == "float" and left_type != "float":
                     tmp_conv = create_temporary()
-                    Code.append(f"%{tmp_conv} = sitofp i32 {left} to float")
+                    Code.append(f"%{tmp_conv} = sitofp i32 {left} to double")
                     left = f"%{tmp_conv}"
                     left_type = "float"
 
@@ -255,11 +272,11 @@ class BinOp(Node):
                 tmp = create_temporary()
                 if result_type == "float":
                     if self.value == "==":
-                        Code.append(f"%{tmp} = fcmp oeq float {left}, {right}")
+                        Code.append(f"%{tmp} = fcmp oeq double {left}, {right}")
                     elif self.value == ">":
-                        Code.append(f"%{tmp} = fcmp ogt float {left}, {right}")
+                        Code.append(f"%{tmp} = fcmp ogt double {left}, {right}")
                     elif self.value == "<":
-                        Code.append(f"%{tmp} = fcmp olt float {left}, {right}")
+                        Code.append(f"%{tmp} = fcmp olt double {left}, {right}")
                 else:
                     if self.value == "==":
                         Code.append(f"%{tmp} = icmp eq i32 {left}, {right}")
@@ -337,7 +354,7 @@ class BinOp(Node):
 
                 cmp_dur = create_temporary()
                 Code.append(
-                    f"%{cmp_dur} = fcmp oeq double {left_dur_str}, {right_dur_str}"
+                    f"%{cmp_dur} = fcmp oeq float {left_dur_str}, {right_dur_str}"
                 )
                 tmp = create_temporary()
                 Code.append(f"%{tmp} = and i1 %{cmp_midi}, %{cmp_dur}")
@@ -443,8 +460,14 @@ class Assignment(Node):
             raise TypeError(
                 f"Tipo incompatível: esperado sequence, recebeu {value_type}"
             )
+
         elif data["type"] != "sequence" and data["type"] != value_type:
-            raise TypeError(f"Tipo incompatível: {data['type']} vs {value_type}")
+            # Verifica se os tipos são float e double (em qualquer ordem)
+            if not (
+                (data["type"] == "float" and value_type == "double")
+                or (data["type"] == "double" and value_type == "float")
+            ):
+                raise TypeError(f"Tipo incompatível: {data['type']} vs {value_type}")
 
         # Se for uma nota, reg_valor será "note_60_1.0"
         if value_type == "note":
@@ -615,8 +638,9 @@ class VarDec(Node):
             # Inicialização (se houver)
             if len(self.children) > 1:
                 value_tmp, value_type = self.children[1].generate(st)
-
-                if llvm_type != value_type:
+                if value_type == "float":
+                    value_type = "double"
+                elif llvm_type != value_type:
                     raise TypeError(
                         f"Tipo da variável '{identifier}' é {llvm_type}, mas valor inicial é {value_type}"
                     )

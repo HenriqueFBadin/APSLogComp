@@ -1,14 +1,71 @@
-music_base { instrument "guitar" 
-tempo_base 160 }
+music_base { 
+    instrument "guitar"
+    tempo_base 120
+}
 
-var nota1 note
-var nota2 note = note F4 duration 0.5
-var nota3 note = note A4 duration 0.5
+// --- Tipos primitivos ---
+var x int = 5
+var y float = 3.14
+var flag bool = true
 
-nota1 = note D4 duration 2
-play_note nota1
-pause duration 2
+// --- Variável note (sem inicialização e com) ---
+var n1 note
+var n2 note = note E4 duration 0.5
 
-play_sequence [nota2 pause duration 1, nota3 pause duration 0.5, nota1 pause duration 0.73, nota2 pause duration 2, nota3 pause duration 1, nota2 pause duration 2]
-var tema sequence = [nota1 pause duration 1, nota2 pause duration 3, nota3 pause duration 2]
-play_sequence tema
+// --- Variável sequence (com e sem inicialização) ---
+var seq1 sequence = [note D4 duration 0.4 pause duration 0.2, n2 pause duration 0.6]
+var seq2 sequence = [n1 pause duration 1, n2 pause duration 2]
+
+// --- Atribuições e expressões ---
+x = x + 2
+y = y * 2.0
+flag = false
+
+// --- Reatribuição de note ---
+n1 = note A4 duration 1.0
+
+// --- Play de notas e pausas simples ---
+play_note n1
+pause duration 1.2
+
+// --- Play de sequência literal ---
+play_sequence [note F4 duration 0.5 pause duration 0.2, note E4 duration 0.6 pause duration 0.3]
+
+// --- Play de sequência via variável ---
+play_sequence seq1
+
+// --- If / else com bloco ---
+if x > 3
+{
+    play_note n2
+    pause duration 0.7
+} else {
+    play_sequence seq2
+}
+
+// --- Repeat (x vezes) ---
+repeat 3 times
+{
+    play_note n1
+    pause duration 0.2
+}
+
+// --- Repeat while (condicional) ---
+repeat 2 times while x < 10
+{
+    play_sequence [note G4 duration 0.5 pause duration 0.2, n1 pause duration 0.6]
+}
+
+// --- Comandos de atribuição dentro de bloco ---
+
+y = y - 1.0
+x = x * 2
+
+
+// --- Testando várias notas, pausas e identifiers em sequence literal ---
+play_sequence [note D4 duration 0.5 pause duration 0.2, n2 pause duration 1, note A4 duration 0.4 pause duration 0.1, n1 pause duration 0.7]
+
+// --- Operadores booleanos e comparação ---
+flag = (x > 2) && (y < 10)
+
+// --- NOTA: Você pode adicionar outros testes específicos se desejar! ---

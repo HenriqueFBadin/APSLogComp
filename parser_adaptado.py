@@ -303,6 +303,9 @@ class Parser:
         elif token.type == "string":
             Parser.tokenizador.selectNext()
             return StrVal(token.value, [])
+        elif token.type == "bool":
+            Parser.tokenizador.selectNext()
+            return BoolVal(token.value, [])
         elif token.type == "identifier":
             Parser.tokenizador.selectNext()
             return Identifier(token.value, [])
