@@ -1,0 +1,50 @@
+music_base {
+    instrument "guitar"
+    tempo_base 120
+}
+
+var e3 note = note E3 duration 0.25
+var g3 note = note G3 duration 0.25
+var a3 note = note A3 duration 0.25
+var a3s note = note A#3 duration 0.25
+var b3 note = note B3 duration 0.25
+var c4 note = note C4 duration 0.25
+var d4 note = note D4 duration 0.25
+var e4 note = note E4 duration 0.25
+var f4 note = note F4 duration 0.25
+var g4 note = note G4 duration 0.25
+var a4 note = note A4 duration 0.25
+
+var melodia1 sequence = [ e4, e4, e4 ]
+play_sequence melodia1
+
+pause duration 0.25
+play_note c4
+play_note e4
+
+pause duration 0.25
+play_note g4
+pause duration 0.5
+play_note g3
+pause duration 0.5
+
+var melodia2 sequence = [ c4, g3, e3 ]
+play_sequence melodia2
+
+play_note a3
+play_note b3
+play_note a3s
+play_note a3
+play_note g3
+pause duration 0.25
+
+play_note e4
+play_note g4
+play_note a4
+play_note f4
+play_note g4
+pause duration 0.125
+play_note e4
+play_note c4
+play_note d4
+play_note b3
