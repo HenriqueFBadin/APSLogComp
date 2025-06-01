@@ -5,7 +5,7 @@
 
 @scan_int = common global i32 0, align 4
 
-; ====== Declarações Globais ======
+; ====== DeclaraÃ§Ãµes Globais ======
 @instrument = global i32 1, align 4  ; instrument = guitar
 @tempo_base = global i32 120, align 4  ; tempo_base = 120
 @melodia1_midi = global [3 x i32] zeroinitializer
@@ -13,10 +13,10 @@
 @melodia2_midi = global [3 x i32] zeroinitializer
 @melodia2_dur = global [3 x double] zeroinitializer
 
-; ====== Funções Musicais ======
-declare void @play_note(i32, float, i32, i32)  ; (nota MIDI, duração em segundos)
-declare void @pause_song(float, i32)           ; (duração em segundos)
-declare void @play_sequence(i32*, float*, i32, i32, i32)  ; (array MIDI, array durações, tamanho)
+; ====== FunÃ§Ãµes Musicais ======
+declare void @play_note(i32, float, i32, i32)  ; (nota MIDI, duraÃ§Ã£o em segundos)
+declare void @pause_song(float, i32)           ; (duraÃ§Ã£o em segundos)
+declare void @play_sequence(i32*, float*, i32, i32, i32)  ; (array MIDI, array duraÃ§Ãµes, tamanho)
 
 declare i32 @printf(i8*, ...)
 declare i32 @scanf(i8*, ...)

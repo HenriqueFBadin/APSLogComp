@@ -1,0 +1,18 @@
+music_base { instrument "guitar" 
+tempo_base 160 }
+
+var nota1 note = note D4 duration 0.5
+var nota2 note = note F4 duration 0.5
+var nota3 note = note A4 duration 0.5
+
+var tema sequence = [nota1, nota2, nota3, nota1, nota2, nota3]
+
+play_sequence tema
+
+repeat 2 times
+{
+    play_note nota3
+    play_note nota2
+    play_note nota1
+    pause duration 0.25
+}

@@ -1,0 +1,14 @@
+music_base { instrument "guitar" 
+tempo_base 80 }
+
+var e note = note E4 duration 1
+var g note = note G4 duration 1
+var a note = note A4 duration 2
+
+repeat 2 times 
+{
+    play_note e
+    play_note g
+    play_note a
+    pause duration 1
+}
