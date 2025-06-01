@@ -5,14 +5,16 @@ var nota1 note = note D4 duration 0.5
 var nota2 note = note F4 duration 0.5
 var nota3 note = note A4 duration 0.5
 
-var tema sequence = [nota1, nota2, nota3, nota1, nota2, nota3]
+var tema sequence = [note D4 duration 0.5 pause duration 0.25, nota2 pause duration 0.25, nota3 pause duration 0.25, nota1 pause duration 0.25, nota2 pause duration 0.25, nota3 pause duration 0.25]
 
 play_sequence tema
 
 repeat 2 times
 {
     play_note nota3
+    pause duration 0.5
     play_note nota2
+    pause duration 0.5
     play_note nota1
     pause duration 0.25
 }

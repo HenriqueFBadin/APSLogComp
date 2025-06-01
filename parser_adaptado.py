@@ -194,15 +194,39 @@ class Parser:
         if Parser.tokenizador.next.type != "openBrackets":
             raise SyntaxError("Esperado '['")
         Parser.tokenizador.selectNext()
+
         items = []
         while Parser.tokenizador.next.type != "closeBrackets":
             if Parser.tokenizador.next.type == "note":
+                # Adiciona a nota
                 items.append(Parser.parseNoteItem())
-            else:
+
+                # Verifica se tem pausa após a nota
+                if Parser.tokenizador.next.type == "pause":
+                    Parser.tokenizador.selectNext()
+                    if Parser.tokenizador.next.type != "duration":
+                        raise SyntaxError("Esperado 'duration' após 'pause'")
+                    Parser.tokenizador.selectNext()
+                    dur = Parser.parseFactor()
+                    # Armazena a pausa como parte da sequência
+                    items.append(Pause("pause", [dur]))
+
+            elif Parser.tokenizador.next.type == "identifier":
                 items.append(Identifier(Parser.tokenizador.next.value, []))
                 Parser.tokenizador.selectNext()
+
+                # Verifica pausa após identificador
+                if Parser.tokenizador.next.type == "pause":
+                    Parser.tokenizador.selectNext()
+                    if Parser.tokenizador.next.type != "duration":
+                        raise SyntaxError("Esperado 'duration' após 'pause'")
+                    Parser.tokenizador.selectNext()
+                    dur = Parser.parseFactor()
+                    items.append(Pause("pause", [dur]))
+
             if Parser.tokenizador.next.type == "comma":
                 Parser.tokenizador.selectNext()
+
         Parser.tokenizador.selectNext()
         return Sequence("sequence", items)
 

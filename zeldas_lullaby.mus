@@ -6,17 +6,22 @@ var repetitions int = 0
 repeat 2 times 
 {
     play_note note E4 duration 0.5
+    pause duration 0.5
     play_note note G4 duration 0.5
+    pause duration 0.5
     play_note note D4 duration 1
     repetitions = repetitions + 1
     pause duration 0.75
     if repetitions == 2
     {
         play_note note E4 duration 0.5
+        pause duration 0.5
         play_note note G4 duration 0.5
+        pause duration 0.5
         play_note note D5 duration 1
-        pause duration 0.6
+        pause duration 1
         play_note note C5 duration 1
+        pause duration 1
         play_note note G4 duration 1
         pause duration 1
     }

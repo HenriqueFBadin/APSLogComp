@@ -25,9 +25,9 @@ class Code:
 {"\n".join(Code.global_decls)}
 
 ; ====== Funções Musicais ======
-declare void @play_note(i32, float, i32, i32)  ; (nota MIDI, duração em segundos)
-declare void @pause_song(float, i32)           ; (duração em segundos)
-declare void @play_sequence(i32*, float*, i32, i32, i32)  ; (array MIDI, array durações, tamanho)
+declare void @play_note(i32, double, i32, i32)  ; (nota MIDI, duração em segundos)
+declare void @pause_song(double, i32)           ; (duração em segundos)
+declare void @play_sequence(i32*, double*, double*, i32, i32, i32)  ; (array MIDI, array durações, tamanho)
 
 declare i32 @printf(i8*, ...)
 declare i32 @scanf(i8*, ...)

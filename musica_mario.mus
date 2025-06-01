@@ -15,7 +15,7 @@ var f4 note = note F4 duration 0.25
 var g4 note = note G4 duration 0.25
 var a4 note = note A4 duration 0.25
 
-var melodia1 sequence = [ e4, e4, e4 ]
+var melodia1 sequence = [ e4 pause duration 0.1, e4 pause duration 0.1, e4 pause duration 0.1 ]
 play_sequence melodia1
 
 pause duration 0.25
@@ -28,7 +28,7 @@ pause duration 0.5
 play_note g3
 pause duration 0.5
 
-var melodia2 sequence = [ c4, g3, e3 ]
+var melodia2 sequence = [ c4 pause duration 0.1, g3 pause duration 0.1, e3 pause duration 0.1 ]
 play_sequence melodia2
 
 play_note a3

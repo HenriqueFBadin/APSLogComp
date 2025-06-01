@@ -450,7 +450,11 @@ class Assignment(Node):
         if value_type == "note":
             midi, duration = reg_valor.split("_")[1:]
             Code.append(f"store i32 {midi}, i32* {data['llvm']}")
-            Code.append(f"store double {float(duration)}, double* {data['llvm_dur']}")
+            if duration.startswith("%"):
+                dur_val_str = duration
+            else:
+                dur_val_str = f"{float(duration):.3f}"
+            Code.append(f"store double {dur_val_str}, double* {data['llvm_dur']}")
         elif data["type"] == "sequence":
             midi_str = reg_valor if reg_valor.startswith("seq_midi:") else None
             dur_str = value_type if value_type.startswith("seq_dur:") else None
@@ -637,10 +641,12 @@ class VarDec(Node):
             if len(self.children) > 1:
                 note_str, _ = self.children[1].generate(st)  # Ex: "note_60_1.0"
                 midi, duration = note_str.split("_")[1:]  # Extrai 60 e 1.0
+                if duration.startswith("%"):
+                    dur_val_str = duration
+                else:
+                    dur_val_str = f"{float(duration):.3f}"
                 Code.append(f"store i32 {midi}, i32* %{identifier}_midi")
-                Code.append(
-                    f"store double {float(duration)}, double* %{identifier}_dur"
-                )
+                Code.append(f"store double {dur_val_str}, double* %{identifier}_dur")
 
             st.create(
                 identifier,
@@ -653,54 +659,94 @@ class VarDec(Node):
 
         # --- Tipo Sequence ---
         elif var_type == "sequence":
-            # Aloca arrays globais para MIDI e durações
-            seq_size = len(self.children[1].children) if len(self.children) > 1 else 0
+            if len(self.children) == 1:
+                raise ValueError("Sequences devem ser inicializadas na declaração")
+            seq_blocks = []
+            i = 0
+            items = self.children[1].children
+
+            while i < len(items):
+                # Espera sempre: Note (ou Identifier)
+                nota = items[i]
+                if not isinstance(nota, (Note, Identifier)):
+                    raise ValueError(
+                        f"Esperado Note ou Identifier na posição {i}, mas veio {type(nota).__name__}"
+                    )
+
+                # Espera sempre: Pause
+                if i + 1 >= len(items):
+                    raise ValueError(
+                        f"Esperado Pause depois da nota na posição {i}, mas acabou a lista"
+                    )
+                pausa = items[i + 1]
+                if not isinstance(pausa, Pause):
+                    raise ValueError(
+                        f"Esperado Pause na posição {i+1}, mas veio {type(pausa).__name__}"
+                    )
+
+                seq_blocks.append((nota, pausa))
+                i += 2
+
+            seq_size = len(seq_blocks)
+
+            # Aloca arrays
             Code.append(
                 f"@{identifier}_midi = global [{seq_size} x i32] zeroinitializer"
             )
             Code.append(
                 f"@{identifier}_dur = global [{seq_size} x double] zeroinitializer"
             )
+            Code.append(
+                f"@{identifier}_pauses = global [{seq_size} x double] zeroinitializer"
+            )
 
-            # Se houver inicialização
-            if len(self.children) > 1:
-                for i, note_node in enumerate(self.children[1].children):
-                    if isinstance(note_node, Identifier):
-                        # Carrega de variável existente
-                        var_data = st.get(note_node.value)
-                        tmp_midi = create_temporary()
-                        tmp_dur = create_temporary()
-                        Code.append(f"%{tmp_midi} = load i32, i32* {var_data['llvm']}")
-                        Code.append(
-                            f"%{tmp_dur} = load double, double* {var_data['llvm_dur']}"
-                        )
-                        Code.append(
-                            f"store i32 %{tmp_midi}, i32* getelementptr ([{seq_size} x i32], [{seq_size} x i32]* @{identifier}_midi, i32 0, i32 {i})"
-                        )
-                        Code.append(
-                            f"store double %{tmp_dur}, double* getelementptr ([{seq_size} x double], [{seq_size} x double]* @{identifier}_dur, i32 0, i32 {i})"
-                        )
-                    else:
-                        # Nota direta
-                        note_str, _ = note_node.generate(st)  # ex.: "note_52_1"
-                        midi_str, dur_str = note_str.split("_")[1:]  # ["52", "1"]
+            # Inicialização de cada bloco (nota + pausa)
+            for idx, (nota, pausa) in enumerate(seq_blocks):
+                # Nota: pode ser Note ou Identifier
+                note_str, _ = nota.generate(st)
+                if isinstance(nota, Note):
+                    midi, duration = note_str.split("_")[1:]
+                    midi_val = midi
+                    dur_val_str = f"{float(duration):.3f}"
+                else:
+                    var_data = st.get(nota.value)
+                    tmp_midi = create_temporary()
+                    tmp_dur = create_temporary()
+                    Code.append(f"%{tmp_midi} = load i32, i32* {var_data['llvm']}")
+                    Code.append(
+                        f"%{tmp_dur} = load double, double* {var_data['llvm_dur']}"
+                    )
+                    midi_val = f"%{tmp_midi}"
+                    dur_val_str = f"%{tmp_dur}"
 
-                        Code.append(
-                            f"store i32 {midi_str}, "
-                            f"i32* getelementptr ([{seq_size} x i32], "
-                            f"[{seq_size} x i32]* @{identifier}_midi, i32 0, i32 {i})"
-                        )
-                        Code.append(
-                            f"store double {float(dur_str)}, "
-                            f"double* getelementptr ([{seq_size} x double], "
-                            f"[{seq_size} x double]* @{identifier}_dur, i32 0, i32 {i})"
-                        )
+                Code.append(
+                    f"store i32 {midi_val}, "
+                    f"i32* getelementptr ([{seq_size} x i32], "
+                    f"[{seq_size} x i32]* @{identifier}_midi, i32 0, i32 {idx})"
+                )
+                Code.append(
+                    f"store double {dur_val_str}, "
+                    f"double* getelementptr ([{seq_size} x double], "
+                    f"[{seq_size} x double]* @{identifier}_dur, i32 0, i32 {idx})"
+                )
+
+                pause_val = pausa.children[0].generate(st)[0]
+                if isinstance(pause_val, str) and pause_val.startswith("%"):
+                    pause_str = pause_val
+                else:
+                    pause_str = f"{float(pause_val):.3f}"
+                Code.append(
+                    f"store double {pause_str}, "
+                    f"double* getelementptr ([{seq_size} x double], "
+                    f"[{seq_size} x double]* @{identifier}_pauses, i32 0, i32 {idx})"
+                )
 
             st.create(
                 identifier,
                 {
                     "llvm": f"@{identifier}_midi",
                     "llvm_dur_arr": f"@{identifier}_dur",
+                    "llvm_pauses": f"@{identifier}_pauses",
                     "size": seq_size,
                     "type": "sequence",
                 },
@@ -744,46 +790,64 @@ class PlaySequence(Node):
         # Pode receber Sequence diretamente ou Identifier
         if isinstance(self.children[0], Sequence):
             # Sequência direta (não armazenada em variável)
-            midi_str, dur_str = self.children[0].generate(st)
+            midi_str, dur_str, pause_str = self.children[0].generate(
+                st
+            )  # Agora recebe também as pausas
+
             # Extrai valores das strings
-            midi_values = midi_str.split("[")[1].split("]")[0].split(",")
-            dur_values = dur_str.split("[")[1].split("]")[0].split(",")
+            midi_values = midi_str[1:-1].split(", ")
+            dur_values = dur_str[1:-1].split(", ")
+            pause_values = pause_str[1:-1].split(", ")
 
             # Aloca arrays temporários
             tmp_midi_arr = create_temporary()
             tmp_dur_arr = create_temporary()
+            tmp_pause_arr = create_temporary()
             size = len(midi_values)
+            print(pause_values)
 
             Code.append(f"%{tmp_midi_arr} = alloca [{size} x i32]")
             Code.append(f"%{tmp_dur_arr} = alloca [{size} x double]")
+            Code.append(f"%{tmp_pause_arr} = alloca [{size} x double]")
 
             # Preenche arrays
             for i in range(size):
-                # ponteiro para a posição i do array MIDI
+                # MIDI
                 gep_m = create_temporary()
                 Code.append(
                     f"%{gep_m} = getelementptr [{size} x i32], "
                     f"[{size} x i32]* %{tmp_midi_arr}, i32 0, i32 {i}"
                 )
-                if midi_values[i].startswith("%"):  # veio de variável
+                if midi_values[i].startswith("%"):
                     Code.append(f"store i32 {midi_values[i]}, i32* %{gep_m}")
-                else:  # é número literal
+                else:
                     Code.append(f"store i32 {midi_values[i]}, i32* %{gep_m}")
 
-                # ponteiro para a posição i do array de durações
+                # Duração
                 gep_d = create_temporary()
                 Code.append(
                     f"%{gep_d} = getelementptr [{size} x double], "
                     f"[{size} x double]* %{tmp_dur_arr}, i32 0, i32 {i}"
                 )
-                if not (dur_values[i].startswith("%")):
+                if dur_values[i].startswith("%"):
+                    Code.append(f"store double {dur_values[i]}, double* %{gep_d}")
+                else:
                     formatted_val = f"{float(dur_values[i]):.3f}"
                     Code.append(f"store double {formatted_val}, double* %{gep_d}")
+
+                # Pausa
+                gep_p = create_temporary()
+                Code.append(
+                    f"%{gep_p} = getelementptr [{size} x double], "
+                    f"[{size} x double]* %{tmp_pause_arr}, i32 0, i32 {i}"
+                )
+                if pause_values[i].startswith("%"):
+                    Code.append(f"store double {pause_values[i]}, double* %{gep_p}")
                 else:
+                    formatted_pause = f"{float(pause_values[i]):.3f}"
+                    Code.append(f"store double {formatted_pause}, double* %{gep_p}")
 
-                    Code.append(f"store double {dur_values[i]}, double* %{gep_d}")
-
-            # Chama play_sequence
+            # Obtém ponteiros para os arrays
             arr_ptr = create_temporary()
             Code.append(
                 f"%{arr_ptr} = getelementptr [{size} x i32], [{size} x i32]* %{tmp_midi_arr}, i32 0, i32 0"
@@ -792,10 +856,20 @@ class PlaySequence(Node):
             Code.append(
                 f"%{dur_ptr} = getelementptr [{size} x double], [{size} x double]* %{tmp_dur_arr}, i32 0, i32 0"
             )
-
+            pause_ptr = create_temporary()
             Code.append(
-                f"call void @play_sequence(i32* %{arr_ptr}, double* %{dur_ptr}, i32 {size}, i32 %instrument, i32 %tempo_base)"
+                f"%{pause_ptr} = getelementptr [{size} x double], [{size} x double]* %{tmp_pause_arr}, i32 0, i32 0"
             )
+
+            # Chama play_sequence com todos os parâmetros
+            Code.append(
+                f"call void @play_sequence(i32* %{arr_ptr}, double* %{dur_ptr}, double* %{pause_ptr}, "
+                f"i32 {size}, i32 %instrument, i32 %tempo_base)"
+            )
+
+            print("DEBUG midi_values:", midi_values)
+            print("DEBUG dur_values:", dur_values)
+            print("DEBUG pause_values:", pause_values)
 
         else:
             # Variável contendo sequência
@@ -804,16 +878,25 @@ class PlaySequence(Node):
 
             midi_ptr = create_temporary()
             Code.append(
-                f"%{midi_ptr} = getelementptr [{var_data['size']} x i32], [{var_data['size']} x i32]* {var_data['llvm']}, i32 0, i32 0"
+                f"%{midi_ptr} = getelementptr [{var_data['size']} x i32], "
+                f"[{var_data['size']} x i32]* {var_data['llvm']}, i32 0, i32 0"
             )
 
             dur_ptr = create_temporary()
             Code.append(
-                f"%{dur_ptr} = getelementptr [{var_data['size']} x float], [{var_data['size']} x float]* {var_data['llvm_dur_arr']}, i32 0, i32 0"
+                f"%{dur_ptr} = getelementptr [{var_data['size']} x double], "
+                f"[{var_data['size']} x double]* {var_data['llvm_dur_arr']}, i32 0, i32 0"
+            )
+
+            pause_ptr = create_temporary()
+            Code.append(
+                f"%{pause_ptr} = getelementptr [{var_data['size']} x double], "
+                f"[{var_data['size']} x double]* {var_data['llvm_pauses']}, i32 0, i32 0"
             )
 
             Code.append(
-                f"call void @play_sequence(i32* %{midi_ptr}, float* %{dur_ptr}, i32 {var_data['size']}, i32 %instrument, i32 %tempo_base)"
+                f"call void @play_sequence(i32* %{midi_ptr}, double* %{dur_ptr}, double* %{pause_ptr}, "
+                f"i32 {var_data['size']}, i32 %instrument, i32 %tempo_base)"
             )
 
 
@@ -860,31 +943,55 @@ class Note(Node):
 
 class Sequence(Node):
     def generate(self, st):
-        # Gera arrays para MIDI e durações
-        midi_values = []
-        dur_values = []
-
-        for note_node in self.children:
-            if isinstance(note_node, Identifier):
-                # Se for variável, carrega seus valores
-                var_data = st.get(note_node.value)
+        midis = []
+        durs = []
+        pauses = []
+        i = 0
+        items = self.children
+        while i < len(items):
+            nota = items[i]
+            if not isinstance(nota, (Note, Identifier)):
+                raise Exception(
+                    f"Esperado Note ou Identifier, veio {type(nota).__name__}"
+                )
+            note_str, _ = nota.generate(st)
+            if isinstance(nota, Note):
+                midi, duration = note_str.split("_")[1:]
+                midi_val = midi
+                dur_val = f"{float(duration):.3f}"
+            else:
+                var_data = st.get(nota.value)
                 tmp_midi = create_temporary()
                 tmp_dur = create_temporary()
                 Code.append(f"%{tmp_midi} = load i32, i32* {var_data['llvm']}")
                 Code.append(f"%{tmp_dur} = load double, double* {var_data['llvm_dur']}")
-                midi_values.append(f"%{tmp_midi}")
-                dur_values.append(f"%{tmp_dur}")
-            else:  # nota direta
-                note_str, _ = note_node.generate(st)  # "note_48_0.5"
-                midi_val, dur_val = note_str.split("_")[1:]  # ["48", "0.5"]
+                midi_val = f"%{tmp_midi}"
+                dur_val = f"%{tmp_dur}"
 
-                midi_values.append(midi_val)  # agora é "48"
-                dur_values.append(dur_val)
+            midis.append(midi_val)
+            durs.append(dur_val)
 
-        # Retorna os arrays como strings especiais
+            if i + 1 >= len(items) or not isinstance(items[i + 1], Pause):
+                raise Exception("Esperado Pause após nota em sequence")
+            pausa = items[i + 1]
+            pause_val = pausa.children[0].generate(st)[0]
+            if isinstance(pause_val, str) and pause_val.startswith("%"):
+                pause_val_str = pause_val
+            else:
+                pause_val_str = f"{float(pause_val):.3f}"
+            pauses.append(pause_val_str)
+
+            i += 2
+
+        print("DEBUG midis:", midis)
+        print("DEBUG durs:", durs)
+        print("DEBUG pauses:", pauses)
+
+        # Retorne as listas já formatadas como strings para o PlaySequence consumir!
         return (
-            f"seq_midi:[{','.join(midi_values)}]",
-            f"seq_dur:[{','.join(dur_values)}]",
+            "[" + ", ".join(midis) + "]",
+            "[" + ", ".join(durs) + "]",
+            "[" + ", ".join(pauses) + "]",
         )
 
 

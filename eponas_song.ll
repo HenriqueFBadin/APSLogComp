@@ -5,14 +5,14 @@
 
 @scan_int = common global i32 0, align 4
 
-; ====== Declarações Globais ======
+; ====== DeclaraÃ§Ãµes Globais ======
 @instrument = global i32 1, align 4  ; instrument = guitar
 @tempo_base = global i32 80, align 4  ; tempo_base = 80
 
-; ====== Funções Musicais ======
-declare void @play_note(i32, float, i32, i32)  ; (nota MIDI, duração em segundos)
-declare void @pause_song(float, i32)           ; (duração em segundos)
-declare void @play_sequence(i32*, float*, i32, i32, i32)  ; (array MIDI, array durações, tamanho)
+; ====== FunÃ§Ãµes Musicais ======
+declare void @play_note(i32, double, i32, i32)  ; (nota MIDI, duraÃ§Ã£o em segundos)
+declare void @pause_song(double, i32)           ; (duraÃ§Ã£o em segundos)
+declare void @play_sequence(i32*, double*, double*, i32, i32, i32)  ; (array MIDI, array duraÃ§Ãµes, tamanho)
 
 declare i32 @printf(i8*, ...)
 declare i32 @scanf(i8*, ...)
@@ -25,15 +25,15 @@ entry:
 %e_midi = alloca i32
 %e_dur = alloca double
 store i32 52, i32* %e_midi
-store double 1.0, double* %e_dur
+store double 1.000, double* %e_dur
 %g_midi = alloca i32
 %g_dur = alloca double
 store i32 55, i32* %g_midi
-store double 1.0, double* %g_dur
+store double 1.000, double* %g_dur
 %a_midi = alloca i32
 %a_dur = alloca double
 store i32 57, i32* %a_midi
-store double 2.0, double* %a_dur
+store double 2.000, double* %a_dur
 %tmp1 = alloca i32
 store i32 0, i32* %tmp1
 br label %repeat_cond_31
