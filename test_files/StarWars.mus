@@ -1,0 +1,19 @@
+music_base {
+    instrument "guitar"
+    tempo_base 120
+}
+var lick1 sequence = [note A3 duration 0.75 pause_duration 0.5, note E4 duration 0.75 pause_duration 0.5]
+var lick2 sequence = [note D4 duration 0.5 pause_duration 0.25, note C#4 duration 0.5 pause_duration 0.25, note B3 duration 0.5 pause_duration 0.25, note A4 duration 1.0 pause_duration 0.75, note E4 duration 0.5 pause_duration 0.25]
+var lick3 sequence = [note D4 duration 0.5 pause_duration 0.25, note C#4 duration 0.5 pause_duration 0.25, note D4 duration 0.5 pause_duration 0.25, note B3 duration 0.75 pause_duration 0.5]
+
+{
+    repeat 3 times {
+        play_note note E3 duration 0.5 
+        pause_duration 0.25
+    }
+    play_sequence lick1
+    repeat 2 times {
+        play_sequence lick2
+    }
+    play_sequence lick3
+}

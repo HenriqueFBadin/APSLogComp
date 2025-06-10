@@ -69,32 +69,30 @@ extern int yydebug;
     PLAY_NOTE = 270,               /* PLAY_NOTE  */
     PLAY_SEQUENCE = 271,           /* PLAY_SEQUENCE  */
     EQ = 272,                      /* EQ  */
-    NEQ = 273,                     /* NEQ  */
-    GT = 274,                      /* GT  */
-    LT = 275,                      /* LT  */
-    GTE = 276,                     /* GTE  */
-    LTE = 277,                     /* LTE  */
-    AND = 278,                     /* AND  */
-    OR = 279,                      /* OR  */
-    NOT = 280,                     /* NOT  */
-    PLUS = 281,                    /* PLUS  */
-    MINUS = 282,                   /* MINUS  */
-    MULTIPLIER = 283,              /* MULTIPLIER  */
-    DIV = 284,                     /* DIV  */
-    LPAREN = 285,                  /* LPAREN  */
-    RPAREN = 286,                  /* RPAREN  */
-    LBRACE = 287,                  /* LBRACE  */
-    RBRACE = 288,                  /* RBRACE  */
-    LBRACKET = 289,                /* LBRACKET  */
-    RBRACKET = 290,                /* RBRACKET  */
-    COMMA = 291,                   /* COMMA  */
-    ASSIGN = 292,                  /* ASSIGN  */
-    NEWLINE = 293,                 /* NEWLINE  */
-    NOTE_NAME = 294,               /* NOTE_NAME  */
-    IDENTIFIER = 295,              /* IDENTIFIER  */
-    STRING = 296,                  /* STRING  */
-    NUMBER = 297,                  /* NUMBER  */
-    ERROR = 298                    /* ERROR  */
+    GT = 273,                      /* GT  */
+    LT = 274,                      /* LT  */
+    AND = 275,                     /* AND  */
+    OR = 276,                      /* OR  */
+    NOT = 277,                     /* NOT  */
+    PLUS = 278,                    /* PLUS  */
+    MINUS = 279,                   /* MINUS  */
+    MULTIPLIER = 280,              /* MULTIPLIER  */
+    DIV = 281,                     /* DIV  */
+    LPAREN = 282,                  /* LPAREN  */
+    RPAREN = 283,                  /* RPAREN  */
+    LBRACE = 284,                  /* LBRACE  */
+    RBRACE = 285,                  /* RBRACE  */
+    LBRACKET = 286,                /* LBRACKET  */
+    RBRACKET = 287,                /* RBRACKET  */
+    COMMA = 288,                   /* COMMA  */
+    ASSIGN = 289,                  /* ASSIGN  */
+    NEWLINE = 290,                 /* NEWLINE  */
+    NOTE_NAME = 291,               /* NOTE_NAME  */
+    IDENTIFIER = 292,              /* IDENTIFIER  */
+    STRING = 293,                  /* STRING  */
+    NUMBER = 294,                  /* NUMBER  */
+    BOOL = 295,                    /* BOOL  */
+    ERROR = 296                    /* ERROR  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -108,8 +106,9 @@ union YYSTYPE
     char *id;
     char *str;
     float num;
+    int boolean;
 
-#line 113 "music.tab.h"
+#line 112 "music.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -1,0 +1,80 @@
+music_base {
+  instrument "piano"
+  tempo_base 120
+}
+var x int = 5
+var y double = 3.14
+var flag bool = true
+var n1 note
+var n2 note = note E4 duration 0.5
+var seq1 sequence = [note D4 duration 0.4 pause_duration 0.2, n2 pause_duration 0.6]
+var seq2 sequence = [n1 pause_duration 1, n2 pause_duration 2]
+{
+    x = x + 2
+    y = y * 2.0
+    flag = false
+    n1 = note A4 duration 1.0
+    play_note n1
+    pause_duration 1.2
+    var seq sequence = [note F4 duration 0.5 pause_duration 0.2, note E4 duration 0.6 pause_duration 0.3]
+    play_sequence seq
+    play_sequence seq1
+    if x > 3 {
+        play_note n2
+        pause_duration 0.7
+    } else {
+        play_sequence seq2
+    }
+    repeat 3 times {
+        play_note n1
+        pause_duration 0.2
+    }
+    repeat 2 times while x < 10 {
+        play_sequence [note G4 duration 0.5 pause_duration 0.2, n1 pause_duration 0.6]
+        x = x + 1
+    }
+    y = y - 1.0
+    x = x * 2
+    var final_sequence sequence = [note D4 duration 0.5 pause_duration 0.2, n2 pause_duration 1, note A4 duration 0.4 pause_duration 0.1, n1 pause_duration 0.7]
+    play_sequence final_sequence
+    flag = (x > 2) && (y < 10)
+    if flag {
+        pause_duration 2
+        play_note note D4 duration 1
+        play_note note G4 duration 1
+        pause_duration 0.5
+        play_note note F4 duration 1
+        play_note note Bb4 duration 1
+        pause_duration 0.5
+        play_note note G4 duration 1
+        play_note note C5 duration 1
+        pause_duration 0.85
+        play_note note D4 duration 1
+        play_note note G4 duration 1
+        pause_duration 0.5
+        play_note note F4 duration 1
+        play_note note Bb4 duration 1
+        pause_duration 0.5
+        play_note note G#4 duration 1
+        play_note note C#5 duration 1
+        pause_duration 0.5
+        play_note note G4 duration 1
+        play_note note C5 duration 1
+        pause_duration 0.85
+        play_note note D4 duration 1
+        play_note note G4 duration 1
+        pause_duration 0.5
+        play_note note F4 duration 1
+        play_note note Bb4 duration 1
+        pause_duration 0.5
+        play_note note G4 duration 1
+        play_note note C5 duration 1
+        pause_duration 0.85
+        play_note note F4 duration 1
+        play_note note Bb4 duration 1
+        pause_duration 0.85
+        play_note note D4 duration 2
+        play_note note G4 duration 2
+        pause_duration 2
+    }
+}

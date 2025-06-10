@@ -1,0 +1,82 @@
+music_base {
+    instrument "guitar"
+    tempo_base 120
+}
+
+var pink sequence = [
+    // /* ---- Primeira frase ---- */
+    note D#4 duration 0.25 pause_duration 0.25,
+
+    note E4  duration 0.75 pause_duration 0.25,
+    note F#4 duration 0.25 pause_duration 0.25,
+    note G4  duration 0.75 pause_duration 0.25,
+    note D#4 duration 0.25 pause_duration 0.0,
+
+    note E4  duration 0.375 pause_duration 0.25,
+    note F#4 duration 0.25 pause_duration 0.25,
+    note G4  duration 0.375 pause_duration 0.25,
+    note C5  duration 0.25 pause_duration 0.25,
+    note B4  duration 0.375 pause_duration 0.25,
+    note E4  duration 0.25 pause_duration 0.25,
+    note G4  duration 0.375 pause_duration 0.25,
+    note B4  duration 0.25 pause_duration 0.25,
+
+    note A#4 duration 1.0 pause_duration 0.0,
+    note A4  duration 0.1875 pause_duration 0.0,
+    note G4  duration 0.1875 pause_duration 0.0,
+    note E4  duration 0.1875 pause_duration 0.0,
+    note D4  duration 0.1875 pause_duration 0.0,
+
+    note E4  duration 1.0 pause_duration 0.75,
+    note D#4 duration 0.5 pause_duration 0.0,
+
+    // /* ---- Segunda frase ---- */
+    note E4  duration 0.75 pause_duration 0.25,
+    note F#4 duration 0.25 pause_duration 0.25,
+    note G4  duration 0.75 pause_duration 0.25,
+    note D#4 duration 0.25 pause_duration 0.0,
+
+    note E4  duration 0.375 pause_duration 0.25,
+    note F#4 duration 0.25 pause_duration 0.25,
+    note G4  duration 0.375 pause_duration 0.25,
+    note C5  duration 0.25 pause_duration 0.25,
+    note B4  duration 0.375 pause_duration 0.25,
+    note G4  duration 0.25 pause_duration 0.25,
+    note B4  duration 0.375 pause_duration 0.25,
+    note E5  duration 0.25 pause_duration 0.0,
+
+    note D#5 duration 2.0 pause_duration 0.0,
+
+    // /* ---- Ponte curta ---- */
+    note D5  duration 1.0 pause_duration 0.75
+    note D#4 duration 0.25 pause_duration 0.0,
+
+    note E4  duration 0.75 pause_duration 0.25,
+    note F#4 duration 0.25 pause_duration 0.25,
+    note G4  duration 0.75 pause_duration 0.25,
+    note D#4 duration 0.25 pause_duration 0.0,
+
+    note E4  duration 0.375 pause_duration 0.25,
+    note F#4 duration 0.25 pause_duration 0.25,
+    note G4  duration 0.375 pause_duration 0.25,
+    note C5  duration 0.25 pause_duration 0.25,
+    note B4  duration 0.375 pause_duration 0.25,
+    note E4  duration 0.25 pause_duration 0.25,
+    note G4  duration 0.375 pause_duration 0.25,
+    note B4  duration 0.25 pause_duration 0.25,
+
+    note A#4 duration 1.0 pause_duration 0.0,
+    note A4  duration 0.1875 pause_duration 0.0,
+    note G4  duration 0.1875 pause_duration 0.0,
+    note E4  duration 0.1875 pause_duration 0.0,
+    note D4  duration 0.1875 pause_duration 0.0,
+
+    note E4  duration 0.75 pause_duration 0.5
+]
+
+{
+    pause_duration 1.0 
+    pause_duration 0.5 
+    pause_duration 0.25
+    play_sequence pink
+}
