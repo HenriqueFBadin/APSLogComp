@@ -8,6 +8,8 @@ Minha linguagem de programação musical nasceu do desejo de compor trilhas sono
 
 [MusicLang Presentation](MusicLang-PowerPoint.pdf)
 
+Para compilar a linguagem basta estar no ubuntu ou no WSL, ter os requisitos já instalados (VLC Media Player e Clang principalmente) e executar o arquivo `tester.sh` que está na raíz do projeto. Caso não queira executar, você pode visualizar como funciona a linguagem no vídeo: [Execução Music Lang](https://youtu.be/XNod50FGCXs)
+
 - **Motivação**:
   Para a matéria de jogos, não conseguia achar na internet musicas simples que fossem condizentes com a atmosfera do meu jogo. Tentei utilizar softwares de criar música, mas não tinha muita familiaridade. Isso me deu vontade de criar uma linguagem de programação, que é um meio que eu tenho mais contato e mais prática na qual eu pudesse tentar gerar músicas simples
 
